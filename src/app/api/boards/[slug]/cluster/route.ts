@@ -23,11 +23,12 @@ export async function POST(request: Request, context: Ctx) {
   if (!ok) {
     return NextResponse.json({ error: "Invalid host password" }, { status: 401 });
   }
+
   if (!board.locked) {
-    return NextResponse.json(
-      { error: "Lock the board first so everyone has finished posting." },
-      { status: 400 },
-    );
+    await prisma.board.update({
+      where: { id: board.id },
+      data: { locked: true },
+    });
   }
 
   try {

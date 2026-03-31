@@ -4,6 +4,19 @@ import { v4 as uuidv4 } from "uuid";
 
 export const SESSION_KEY = "rekindle_session_id";
 
+/** Stable per-device, per-board display label — no name form. */
+export function getOrCreateDisplayName(slug: string): string {
+  const key = `rekindle_display_${slug}`;
+  let name = localStorage.getItem(key)?.trim();
+  if (!name) {
+    const id = getOrCreateSessionId().replace(/-/g, "");
+    const short = id.slice(0, 4);
+    name = `Guest ${short}`;
+    localStorage.setItem(key, name);
+  }
+  return name;
+}
+
 export function nameStorageKey(slug: string): string {
   return `rekindle_name_${slug}`;
 }

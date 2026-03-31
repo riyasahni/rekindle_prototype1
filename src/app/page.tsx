@@ -73,6 +73,10 @@ export default function HomePage() {
 
   const boardUrl =
     createdBoard && origin ? `${origin}/b/${encodeURIComponent(createdBoard.slug)}` : "";
+  const moderateUrl =
+    createdBoard && origin
+      ? `${origin}/b/${encodeURIComponent(createdBoard.slug)}/moderate`
+      : "";
 
   return (
     <div className="min-h-full bg-gradient-to-b from-amber-50/90 via-white to-sky-50/80 text-zinc-900">
@@ -80,8 +84,9 @@ export default function HomePage() {
         <div className="mx-auto max-w-3xl px-4 py-8">
           <h1 className="text-3xl font-semibold tracking-tight">Rekindle</h1>
           <p className="mt-2 max-w-xl text-sm text-zinc-600">
-            Facilitators create a board here, print or show the QR code, and participants scan it,
-            enter their name, and post—no accounts.
+            Create a board, share the participant link or QR. They land straight on the board — no
+            sign-in — upload a photo and caption, and see everyone’s posts update live. You use the
+            separate moderator link to run <strong>Cluster</strong> when ready. No accounts.
           </p>
         </div>
       </header>
@@ -94,11 +99,11 @@ export default function HomePage() {
         )}
 
         <section className="rounded-2xl border border-teal-100 bg-teal-50/40 p-6 shadow-sm">
-          <h2 className="text-lg font-medium">Create a board (facilitator)</h2>
+          <h2 className="text-lg font-medium">Create a board (moderator)</h2>
           <p className="mt-1 text-sm text-zinc-600">
-            Use the deployment <code className="rounded bg-zinc-100 px-1">HOST_SECRET</code> to
-            authorize. Set a separate <strong>host password</strong> for locking and clustering
-            this board.
+            Use <code className="rounded bg-zinc-100 px-1">HOST_SECRET</code> from your server env.
+            Pick a <strong>host password</strong> — you’ll need it to click <strong>Cluster</strong>{" "}
+            on the board later.
           </p>
           <form onSubmit={createBoard} className="mt-4 flex flex-col gap-3">
             <label className="flex flex-col gap-1 text-sm">
@@ -153,11 +158,12 @@ export default function HomePage() {
           </form>
         </section>
 
-        {createdBoard && boardUrl && (
+        {createdBoard && boardUrl && moderateUrl && (
           <section className="mt-10 rounded-2xl border border-amber-200 bg-white p-8 text-center shadow-sm">
-            <h2 className="text-lg font-medium">Share this board</h2>
+            <h2 className="text-lg font-medium">Share with participants</h2>
             <p className="mt-2 text-sm text-zinc-600">
-              Participants open this link or scan the QR code, then enter their name.
+              QR or link below — they go straight to the board (no password). Photo + caption; posts
+              refresh every few seconds.
             </p>
             <div className="mt-6 flex flex-col items-center gap-4">
               <div className="rounded-2xl bg-white p-4 shadow-inner ring-1 ring-zinc-100">
@@ -170,7 +176,22 @@ export default function HomePage() {
                 href={`/b/${encodeURIComponent(createdBoard.slug)}`}
                 className="rounded-full bg-zinc-900 px-6 py-2.5 text-sm font-medium text-white"
               >
-                Open board
+                Open participant board
+              </Link>
+            </div>
+            <div className="mt-8 border-t border-zinc-100 pt-6 text-left">
+              <h3 className="text-sm font-medium text-zinc-900">Moderator only</h3>
+              <p className="mt-1 text-xs text-zinc-600">
+                Bookmark this — use your host password here to run Cluster (not shown to participants).
+              </p>
+              <code className="mt-3 block break-all rounded-lg bg-violet-50 px-3 py-2 text-xs text-zinc-800">
+                {moderateUrl}
+              </code>
+              <Link
+                href={moderateUrl}
+                className="mt-3 inline-block rounded-lg border border-violet-300 bg-violet-50 px-4 py-2 text-sm font-medium text-violet-900"
+              >
+                Open moderator page
               </Link>
             </div>
           </section>
