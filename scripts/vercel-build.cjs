@@ -16,11 +16,23 @@ execSync("npx prisma generate", {
 });
 
 if (!realUrl) {
-  console.error(
-    "\n[Rekindle] DATABASE_URL is not set.\n" +
-      "  Vercel → your project → Settings → Environment Variables\n" +
-      "  Add DATABASE_URL (your Postgres connection string) for Production, then redeploy.\n",
-  );
+  console.error(`
+[Rekindle] DATABASE_URL is not set.
+
+This app needs a hosted Postgres database (free tier is fine).
+
+  1) Create a free DB: https://neon.tech → Sign up → Create project → copy "Connection string"
+     (or https://supabase.com → New project → Settings → Database → URI)
+
+  2) Vercel → your project → Settings → Environment Variables
+     Name: DATABASE_URL
+     Value: (paste the postgresql://... string)
+     Environment: Production (and Preview if you use it)
+
+  3) Redeploy the project.
+
+See DEPLOY.md in the repo for screenshots-level detail.
+`);
   process.exit(1);
 }
 
