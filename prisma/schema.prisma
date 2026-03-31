@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Board {
+  id             String   @id @default(cuid())
+  slug           String   @unique
+  name           String
+  locked         Boolean  @default(false)
+  hostSecretHash String
+  createdAt      DateTime @default(now())
+  posts          Post[]
+  clusterRuns    ClusterRun[]
+}
+
+model Post {
+  id            String    @id @default(cuid())
+  boardId       String
+  sessionId     String
+  displayName   String
+  imageUrl      String    @db.Text
+  description   String    @db.Text
+  clusterId     Int?
+  clusterRunId  String?
+  createdAt     DateTime  @default(now())
+  board         Board     @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  comments      Comment[]
+  clusterRun    ClusterRun? @relation(fields: [clusterRunId], references: [id])
+
+  @@unique([boardId, sessionId])
+  @@index([boardId])
+  @@index([sessionId])
+}
+
+model Comment {
+  id          String   @id @default(cuid())
+  postId      String
+  sessionId   String
+  displayName String
+  text        String   @db.Text
+  createdAt   DateTime @default(now())
+  post        Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@index([postId])
+}
+
+model ClusterRun {
+  id            String   @id @default(cuid())
+  boardId       String
+  createdAt     DateTime @default(now())
+  k             Int
+  clusterLabels Json?
+  board         Board    @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  posts         Post[]
+
+  @@index([boardId])
+}
