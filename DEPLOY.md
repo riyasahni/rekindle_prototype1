@@ -37,7 +37,10 @@ git push -u origin main
 3. **Build Command:** leave default (`npm run build` — already runs Prisma migrate + Next build).  
 4. **Root directory:** repo root (where `package.json` is).
 
-## 4. Environment variables (Vercel)
+## 4. Environment variables (Vercel) — required before build succeeds
+
+The build runs `prisma migrate deploy`, which **must** have a real `DATABASE_URL`. If it is missing, the build stops with a short message pointing here.
+
 
 In **Project → Settings → Environment Variables**, add:
 
