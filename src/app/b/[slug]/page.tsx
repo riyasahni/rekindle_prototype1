@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { compressImageForUpload } from "@/lib/compress-image-client";
 import { getOrCreateDisplayName, getOrCreateSessionId } from "@/lib/guest-client";
 
 type Comment = {
@@ -100,11 +101,19 @@ export default function BoardPage() {
     if (!file || !desc.trim()) return;
     setSubmitting(true);
     setError(null);
+    let imageFile: File;
+    try {
+      imageFile = await compressImageForUpload(file);
+    } catch (e) {
+      setSubmitting(false);
+      setError(e instanceof Error ? e.message : "Could not process image");
+      return;
+    }
     const fd = new FormData();
     fd.append("sessionId", sid);
     fd.append("displayName", name);
     fd.append("description", desc.trim());
-    fd.append("image", file);
+    fd.append("image", imageFile);
     const res = await fetch(`/api/boards/${encodeURIComponent(slug)}/posts`, {
       method: "POST",
       body: fd,
@@ -197,7 +206,8 @@ export default function BoardPage() {
             <h2 className="text-lg font-medium text-zinc-900">Add your photo</h2>
             <p className="mt-1 text-sm text-zinc-600">
               One photo per phone. You appear as <span className="font-medium">{displayName}</span>.
-              We group similar stories using your caption.
+              Large photos are resized on your device before upload. We group similar stories using
+              your caption.
             </p>
             <form onSubmit={onSubmitPost} className="mt-4 flex flex-col gap-4">
               <label className="flex flex-col gap-1 text-sm">
