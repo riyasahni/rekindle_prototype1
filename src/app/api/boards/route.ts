@@ -11,11 +11,20 @@ function getSetupSecret(request: Request): string | null {
   return null;
 }
 
+const hostSecretMissing = () =>
+  NextResponse.json(
+    {
+      error:
+        "HOST_SECRET is not set on the server. Add it in Vercel → Project → Settings → Environment Variables (same name: HOST_SECRET), then redeploy. For local dev, set it in .env",
+    },
+    { status: 503 },
+  );
+
 const unauthorized = () => NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
 export async function GET(request: Request) {
   const expected = process.env.HOST_SECRET;
-  if (!expected) return NextResponse.json({ error: "HOST_SECRET not configured" }, { status: 503 });
+  if (!expected) return hostSecretMissing();
   const secret = getSetupSecret(request);
   if (secret !== expected) return unauthorized();
 
@@ -29,7 +38,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const expected = process.env.HOST_SECRET;
   if (!expected) {
-    return NextResponse.json({ error: "HOST_SECRET not configured on server" }, { status: 503 });
+    return hostSecretMissing();
   }
 
   const body = (await request.json()) as {

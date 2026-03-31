@@ -78,7 +78,7 @@ In **Project → Settings → Environment Variables**, add:
 |------|--------|----------|
 | `DATABASE_URL` | Postgres URL from step 1 | Yes |
 | `OPENAI_API_KEY` | `sk-...` from OpenAI | Yes (clustering) |
-| `HOST_SECRET` | Long random string (facilitator creates boards) | Yes |
+| `HOST_SECRET` | Long random string **you invent** (facilitator types it on `/` to create boards — must match this value) | Yes — if missing, API returns 503 |
 | `BLOB_READ_WRITE_TOKEN` | From Vercel Blob (optional) | No — omit to store images in DB (max ~2MB) |
 
 Apply to **Production** (and **Preview** if you want preview deploys to work).
